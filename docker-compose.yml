@@ -1,0 +1,16 @@
+version: '2'
+services:
+  web:
+    build: src
+    volumes:
+      - ./sockets:/sockets
+
+  nginx_server:
+    build: server 
+    restart: always
+    environment:
+      TZ: 'Asia/Shanghai'
+    ports:
+      - 8001:80
+    volumes:
+      - ./sockets:/sockets
