@@ -11,12 +11,13 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss}
 
 @app.route('/')
 def index():
-    _str = '''参数例子: ./ip/88.16.153.125/88.16.153.135\n'''
+    # _str = '''参数例子: ./ip/88.16.153.125/88.16.153.135\n'''
+    _str = ''' curl -i -H "Content-Type: application/json" -X POST -d '{"server_ip":"88.16.153.3","server_port":"22","server_name":"username","server_passwd":"password","target_ip1":"88.16.153.1","target_ip2":"88.16.153.10"}' http://127.0.0.1:8000/json'''
     return _str
 
 
-# @app.route('/json', methods=['POST'])
-@app.route('/json', methods=['GET', 'POST'])
+@app.route('/json', methods=['POST'])
+# @app.route('/json', methods=['GET', 'POST'])
 def _ip():
     logger.info(request.method)
     logger.info(request.json)
@@ -31,4 +32,3 @@ def page_not_found(e):
 if __name__ == '__main__':
     # app.debug = True
     app.run(host='0.0.0.0', port=8000)
-    # curl -i -H "Content-Type: application/json" -X POST -d '{"server_ip":"88.16.153.3","server_port":"22","server_name":"ljl","server_passwd":"1","target_ip1":"88.16.153.1","target_ip2":"88.16.153.10"}' http://127.0.0.1:8001/json

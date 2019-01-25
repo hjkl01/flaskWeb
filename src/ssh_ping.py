@@ -17,16 +17,20 @@ def ssh2(ip, port, username, passwd, target_ip, result_dict):
 
         stdin, stdout, stderr = ssh.exec_command(cmd)
         out = stdout.readlines()
-        if len(out) == 8 and 'Unreachable' not in str(out):
-            result_dict[target_ip] = 'exist'
+        if len(out)== 8 and 'Unreachable' not in str(out):
+            result_dict[target_ip] = True
         else:
-            result_dict[target_ip] = 'error'
+            result_dict[target_ip] = False
 
         logger.info('%s:\n%s' %(target_ip, out))
         ssh.close()
         # return out
-    except:
-        print('%s\tError\n' %(ip))
+    except Exception as err:
+        if 'Error reading SSH protocol' in str(err):
+            ssh2(ip, port, username, passwd, target_ip, result_dict)
+        else:
+            result_dict[ip] = False
+            logger.error('%s %s' %(err, target_ip))
 
 
 def run(_dict):
@@ -52,7 +56,7 @@ def run(_dict):
                 _dict.get('server_port'),
                 _dict.get('server_name'),
                 _dict.get('server_passwd'),
-                '%s%s' % (temp_ip, i),
+                '%s%s' %(temp_ip, i),
                 result_dict,
             ))
         jobs.append(p)
@@ -60,27 +64,23 @@ def run(_dict):
 
     for proc in jobs:
         proc.join()
-    logger.info(dict(result_dict))
+    result = dict(result_dict)
+    if len(list(result.keys()))> 1:
+        result[_dict.get('server_ip')] = True
+    logger.info(result)
+    logger.info(len(result.keys()))
     # logger.info(type(dict(_dict)))
-    return dict(result_dict)
+    return result
 
 
 if __name__ == '__main__':
     _dict = {
-        'server_ip': '88.16.153.3',
+        'server_ip': '88.16.153.196',
         'server_port': '22',
         'server_name': 'ljl',
         'server_passwd': '1',
-        'target_ip1': '88.16.153.1',
-        'target_ip2': '88.16.153.10',
+        'target_ip1': '88.16.153.150',
+        'target_ip2': '88.16.153.200',
     }
     run(_dict)
 
-    # cmd = ['ping -c 3 -W 1 baidu.com', 'ping -c 3 google.com']
-    # username = "ljl"
-    # passwd = "1"
-
-    # print("Begin......")
-    # ip = '88.16.153.3'
-    # port = 22
-    # ssh2(ip, port, username, passwd, '88.16.153.3')
