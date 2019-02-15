@@ -3,7 +3,7 @@
 import subprocess
 import os
 from ssh_ping import run
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, jsonify, redirect, request, render_template
 from werkzeug import secure_filename
 app = Flask(__name__)
 
@@ -57,17 +57,31 @@ def _ansible():
         logger.info(result)
         return result
     else:
-        return '''
-        <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
-        <form action="" method=post enctype=multipart/form-data>
-          <p><input type=file name=hosts>
-             <input type=file name=yml>
-             <input type=submit value=Upload>
-          </p>
-        </form>
-        '''
+        return render_template('upload.html')
+
+
+# @app.route('/files', methods=['POST'])
+@app.route('/files', methods=['GET', 'POST'])
+def _files():
+    logger.info(request.json)
+    try:
+        _from = int(request.json.get('from')) - 1
+        _to = int(request.json.get('to'))
+        logger.info('%s %s' % (_from, _to))
+    except Exception as err:
+        return err
+
+    path = request.json.get('path')
+    full_list = [os.path.join(path, i) for i in os.listdir(path)]
+    time_sorted_list = sorted(full_list, key=os.path.getmtime)
+    sorted_filename_list = [os.path.basename(i) for i in time_sorted_list]
+    logger.info(sorted_filename_list)
+    logger.info(type(sorted_filename_list))
+
+    if _from < _to and _to < len(sorted_filename_list):
+        return jsonify(sorted_filename_list[_from:_to])
+    else:
+        return jsonify(sorted_filename_list)
 
 
 @app.errorhandler(404)

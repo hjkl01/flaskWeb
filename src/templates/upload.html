@@ -1,0 +1,25 @@
+<!doctype html>
+<title>Upload new File</title>
+<style>
+    .firstform{width: 1000px;margin: auto;height: 400px;border: 1px solid #ccc; box-shadow: darkgrey 10px 10px 30px 5px ;margin-top:30px;}
+    .firsth1{ text-align: center;
+        background-color: #efefef;
+        line-height: 52px;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        font-size: 25px;}
+    .firstdiv p{text-align: center;
+        line-height: 40px;}
+    .firstdiv{width: 50%;margin:auto;border: 1px solid #ccc;margin-top: 50px;padding: 20px;border-radius:4px;}
+    .btn{border: none;background-color: #3c8dbc;color: white;line-height: 30px;border-radius: 4px;}
+</style>
+
+<form action="" method=post enctype=multipart/form-data class="firstform">
+    <h1 class="firsth1">Upload new File</h1>
+    <div class="firstdiv">
+    <p><input type=file name=hosts></p>
+        <p><input type=file name=yml> </p>
+       <p> <input type=submit value=Upload class="btn"></p>
+    </div>
+</form>
