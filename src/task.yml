@@ -1,0 +1,16 @@
+---
+- name: test route
+  hosts: cisco
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: test 
+      ios_command:
+        commands:
+          - show version
+            # - show interfaces
+
+      register: output
+
+    - debug: msg="Hello World! {{ output.stdout }}"

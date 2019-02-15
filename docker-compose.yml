@@ -2,14 +2,16 @@ version: '2'
 services:
   web:
     build: src
+    environment:
+      - "TZ=Asia/Shanghai"
     volumes:
       - ./sockets:/sockets
 
   nginx_server:
     build: server 
     restart: always
-    environment:
-      TZ: 'Asia/Shanghai'
+    # environment:
+    #   - "TZ=Asia/Shanghai"
     ports:
       - 8001:80
     volumes:

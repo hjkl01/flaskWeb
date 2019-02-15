@@ -5,5 +5,6 @@ FROM nginx:1.13.1
 RUN rm /etc/nginx/conf.d/default.conf
 # Copy the modified Nginx conf
 COPY nginx.conf /etc/nginx/conf.d/
+COPY localtime /etc/localtime
 # CMD ["nginx-debug"]
 CMD ["nginx", "-g", "daemon off;"]

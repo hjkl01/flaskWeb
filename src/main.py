@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
+import subprocess
+import os
 from ssh_ping import run
 from flask import Flask, jsonify, redirect, request
+from werkzeug import secure_filename
 app = Flask(__name__)
 
 from loguru import logger
@@ -22,6 +25,49 @@ def _ip():
     logger.info(request.method)
     logger.info(request.json)
     return jsonify(run(request.json))
+
+
+def run_commands(cmd):
+    my_env = os.environ.copy()
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, env=my_env)
+    output, error = process.communicate()
+    return output
+
+
+@app.route('/ansible/example')
+def _ansible_example():
+    cmd = "ansible-playbook -i hosts task.yml"
+    output = run_commands(cmd)
+    logger.info(output)
+    return output
+
+
+@app.route('/ansible', methods=['GET', 'POST'])
+def _ansible():
+    if request.method == 'POST':
+        file = request.files['hosts']
+        hosts = secure_filename(file.filename)
+        file.save(os.path.join('%s/config' % os.getcwd(), hosts))
+        file = request.files['yml']
+        yml = secure_filename(file.filename)
+        file.save(os.path.join('%s/config' % os.getcwd(), yml))
+        logger.info('upload success %s %s' % (hosts, yml))
+        cmd = 'ansible-playbook -i config/%s config/%s' % (hosts, yml)
+        result = run_commands(cmd)
+        logger.info(result)
+        return result
+    else:
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form action="" method=post enctype=multipart/form-data>
+          <p><input type=file name=hosts>
+             <input type=file name=yml>
+             <input type=submit value=Upload>
+          </p>
+        </form>
+        '''
 
 
 @app.errorhandler(404)
