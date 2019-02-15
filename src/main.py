@@ -14,9 +14,9 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss}
 
 @app.route('/')
 def index():
-    # _str = '''参数例子: ./ip/88.16.153.125/88.16.153.135\n'''
-    _str = ''' curl -i -H "Content-Type: application/json" -X POST -d '{"server_ip":"88.16.153.3","server_port":"22","server_name":"username","server_passwd":"password","target_ip1":"88.16.153.1","target_ip2":"88.16.153.10"}' http://127.0.0.1:8000/json'''
-    return _str
+    # _str = ''' curl -i -H "Content-Type: application/json" -X POST -d '{"server_ip":"88.16.153.3","server_port":"22","server_name":"username","server_passwd":"password","target_ip1":"88.16.153.1","target_ip2":"88.16.153.10"}' http://127.0.0.1:8000/json'''
+    # return _str
+    return render_template('index.html')
 
 
 @app.route('/json', methods=['POST'])

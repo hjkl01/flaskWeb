@@ -1,0 +1,53 @@
+
+    <html lang="zh-cn">
+    <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <link href="default.css" rel="stylesheet">
+    <link href="github.css" rel="stylesheet">
+    </head>
+    <body>
+    <h2 id="ping">/ping</h2>
+<div class="codehilite"><pre><span></span>    curl -i -H <span class="s2">&quot;Content-Type: application/json&quot;</span> -X POST -d <span class="s1">&#39;{&quot;server_ip&quot;:&quot;88.16.153.3&quot;,&quot;server_port&quot;:&quot;22&quot;,&quot;server_name&quot;:&quot;username&quot;,&quot;server_passwd&quot;:&quot;password&quot;,&quot;target_ip1&quot;:&quot;88.16.153.1&quot;,&quot;target_ip2&quot;:&quot;88.16.153.10&quot;}&#39;</span> http://127.0.0.1:8001/json
+</pre></div>
+
+
+<h2 id="ansible">/ansible</h2>
+<h3 id="_1">点击选择文件上传</h3>
+<h4 id="hosts">第一个应为hosts</h4>
+<div class="codehilite"><pre><span></span><span class="o">[</span>cisco<span class="o">]</span>
+<span class="c1"># 66.16.254.254</span>
+<span class="m">66</span>.16.254.1 <span class="nv">ansible_ssh_user</span><span class="o">=</span>cisco <span class="nv">ansible_ssh_pass</span><span class="o">=</span>cisco <span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22</span>
+
+<span class="o">[</span>h3c<span class="o">]</span>
+<span class="c1"># export ANSIBLE_HOST_KEY_CHECKING=False</span>
+<span class="m">66</span>.5.254.130 <span class="nv">ansible_ssh_user</span><span class="o">=</span>jsnx <span class="nv">ansible_ssh_pass</span><span class="o">=</span>jmycisco <span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22</span>
+<span class="m">66</span>.10.254.1 <span class="nv">ansible_ssh_user</span><span class="o">=</span>jsnx <span class="nv">ansible_ssh_pass</span><span class="o">=</span>jmycisco <span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22</span>
+</pre></div>
+
+
+<h4 id="taskyml">第二个为task.yml</h4>
+<div class="codehilite"><pre><span></span>---
+- name: <span class="nb">test</span> route
+  hosts: cisco
+  gather_facts: <span class="nb">false</span>
+  connection: <span class="nb">local</span>
+
+  tasks:
+    - name: <span class="nb">test</span> 
+      ios_command:
+        commands:
+          - show version
+            <span class="c1"># - show interfaces</span>
+
+      register: output
+
+    - debug: <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;Hello World! {{ output.stdout }}&quot;</span>
+</pre></div>
+
+
+<h2 id="files">/files</h2>
+<div class="codehilite"><pre><span></span>curl -i -H <span class="s2">&quot;Content-Type: application/json&quot;</span> -X POST -d <span class="s1">&#39;{&quot;path&quot;:&quot;config&quot;, &quot;from&quot;:&quot;1&quot;, &quot;to&quot;:&quot;5&quot;}&#39;</span> http://127.0.0.1:8001/files
+</pre></div>
+    </body>
+    </html>
+    
