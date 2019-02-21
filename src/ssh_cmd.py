@@ -7,21 +7,30 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss}
 
 
 def ssh_cmd(_dict):
-    try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(_dict.get('ip'), _dict.get('port'), _dict.get('username'), _dict.get('password'), timeout=5)
-        stdin, stdout, stderr = ssh.exec_command(_dict.get('cmd'))
-        out = stdout.readlines()
-        logger.info(out)
-        ssh.close()
-        result = {"result": out}
-        return result
-    except Exception as err:
-        logger.error(err)
-        return err
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(
+        _dict.get('ip'),
+        _dict.get('port'),
+        _dict.get('username'),
+        _dict.get('password'),
+        timeout=5,
+        allow_agent=False,
+        look_for_keys=False)
+    stdin, stdout, stderr = ssh.exec_command(_dict.get('cmd'))
+    out = stdout.read()
+    logger.info(out)
+    ssh.close()
+    result = {"result": out}
+    return result
 
 
 if __name__ == '__main__':
-    _dict = {'ip': 'viewer.pub', 'port': '1080', 'username': 'ljl', 'password': 'jinlong', 'cmd': 'ls'}
+    _dict = {
+        'ip': '66.10.254.2',
+        'port': '22',
+        'username': 'jsnx',
+        'password': 'jmycisco',
+        'cmd': 'display current-configuration'
+    }
     ssh_cmd(_dict)
