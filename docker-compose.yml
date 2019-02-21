@@ -5,14 +5,18 @@ services:
     environment:
       - "TZ=Asia/Shanghai"
     volumes:
+      - ./logs:/app/logs
+      - /tmp:/config:ro
       - ./sockets:/sockets
 
   nginx_server:
     build: server 
     restart: always
-    # environment:
-    #   - "TZ=Asia/Shanghai"
+    environment:
+      - "TZ=Asia/Shanghai"
     ports:
       - 8001:80
     volumes:
+      - ./server/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx_log:/var/log/nginx
       - ./sockets:/sockets

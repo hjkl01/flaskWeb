@@ -76,12 +76,15 @@ def _files():
     time_sorted_list = sorted(full_list, key=os.path.getmtime)
     sorted_filename_list = [os.path.basename(i) for i in time_sorted_list]
     logger.info(sorted_filename_list)
-    logger.info(type(sorted_filename_list))
+    # logger.info(type(sorted_filename_list))
 
-    if _from < _to and _to < len(sorted_filename_list):
-        return jsonify(sorted_filename_list[_from:_to])
+    if _from < _to and _to - 1 < len(sorted_filename_list):
+        files = sorted_filename_list[_from:_to]
     else:
-        return jsonify(sorted_filename_list)
+        files = sorted_filename_list[_from:]
+
+    result = {'lengths': len(sorted_filename_list), 'files': files}
+    return jsonify(result)
 
 
 @app.errorhandler(404)
