@@ -3,6 +3,7 @@
 import subprocess
 import os
 from ssh_ping import run
+from ssh_cmd import ssh_cmd
 from flask import Flask, jsonify, redirect, request, render_template
 from werkzeug import secure_filename
 app = Flask(__name__)
@@ -19,12 +20,18 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/json', methods=['POST'])
-# @app.route('/json', methods=['GET', 'POST'])
-def _ip():
+@app.route('/ping', methods=['POST'])
+def ping_ip():
     logger.info(request.method)
     logger.info(request.json)
     return jsonify(run(request.json))
+
+
+@app.route('/cmd', methods=['POST'])
+def run_cmd():
+    logger.info(request.method)
+    logger.info(request.json)
+    return jsonify(ssh_cmd(request.json))
 
 
 def run_commands(cmd):
@@ -94,4 +101,4 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     # app.debug = True
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8001)
