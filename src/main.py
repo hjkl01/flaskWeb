@@ -4,13 +4,16 @@ import subprocess
 import os
 from ssh_ping import run
 from ssh_cmd import ssh_cmd
+from cron_device_conf import cron, devices_test_cmd
 from flask import Flask, jsonify, redirect, request, render_template
 from werkzeug import secure_filename
 app = Flask(__name__)
 
 from loguru import logger
 
-logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
+logger.add(
+    "logs/%s.log" % __file__.rstrip('.py'),
+    format="{time:MM-DD HH:mm:ss} {level} {message}")
 
 
 @app.route('/')
@@ -34,9 +37,24 @@ def run_cmd():
     return jsonify(ssh_cmd(request.json))
 
 
+@app.route('/device', methods=['POST'])
+def _device():
+    logger.info(request.method)
+    logger.info(request.json)
+    return jsonify(devices_test_cmd(request.json))
+
+
+@app.route('/cron', methods=['GET', 'POST'])
+def _cron():
+    logger.info(request.method)
+    logger.info(request.json)
+    cron()
+
+
 def run_commands(cmd):
     my_env = os.environ.copy()
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, env=my_env)
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, shell=True, env=my_env)
     output, error = process.communicate()
     return output
 
