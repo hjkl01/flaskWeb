@@ -113,7 +113,7 @@ def _files():
 @app.route('/search/<path:path>/<path:word>')
 def search(path, word):
     logger.info(word)
-    dirs = os.listdir('%s%s' % ('', path))
+    dirs = os.listdir('%s%s' % ('/files/', path))
     result = {}
     result['result'] = []
     for d in dirs:
