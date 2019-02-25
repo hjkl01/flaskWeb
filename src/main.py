@@ -4,7 +4,8 @@ import subprocess
 import os
 from ssh_ping import run
 from ssh_cmd import ssh_cmd
-from cron_device_conf import cron, devices_test_cmd
+# from cron_device_conf import cron, devices_test_cmd
+from cron_device_conf import Cron
 from flask import Flask, jsonify, redirect, request, render_template
 from werkzeug import secure_filename
 app = Flask(__name__)
@@ -18,8 +19,6 @@ logger.add(
 
 @app.route('/')
 def index():
-    # _str = ''' curl -i -H "Content-Type: application/json" -X POST -d '{"server_ip":"88.16.153.3","server_port":"22","server_name":"username","server_passwd":"password","target_ip1":"88.16.153.1","target_ip2":"88.16.153.10"}' http://127.0.0.1:8000/json'''
-    # return _str
     return render_template('index.html')
 
 
@@ -41,14 +40,14 @@ def run_cmd():
 def _device():
     logger.info(request.method)
     logger.info(request.json)
-    return jsonify(devices_test_cmd(request.json))
+    return jsonify(Cron().devices_test_cmd(request.json))
 
 
 @app.route('/cron', methods=['GET', 'POST'])
 def _cron():
     logger.info(request.method)
     logger.info(request.json)
-    cron()
+    Cron().cron()
 
 
 def run_commands(cmd):
@@ -85,7 +84,6 @@ def _ansible():
         return render_template('upload.html')
 
 
-# @app.route('/files', methods=['POST'])
 @app.route('/files', methods=['GET', 'POST'])
 def _files():
     logger.info(request.json)
@@ -109,6 +107,19 @@ def _files():
         files = sorted_filename_list[_from:]
 
     result = {'lengths': len(sorted_filename_list), 'files': files}
+    return jsonify(result)
+
+
+@app.route('/search/<path:path>/<path:word>')
+def search(path, word):
+    logger.info(word)
+    dirs = os.listdir('%s%s' % ('', path))
+    result = {}
+    result['result'] = []
+    for d in dirs:
+        if word in d:
+            result['result'].append(d)
+
     return jsonify(result)
 
 
