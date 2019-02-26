@@ -96,7 +96,7 @@ def _files():
 
     path = request.json.get('path')
     full_list = [os.path.join(path, i) for i in os.listdir(path)]
-    time_sorted_list = sorted(full_list, key=os.path.getmtime)
+    time_sorted_list = sorted(full_list, key=os.path.getmtime, reverse=False)
     sorted_filename_list = [os.path.basename(i) for i in time_sorted_list]
     logger.info(sorted_filename_list)
     # logger.info(type(sorted_filename_list))
@@ -110,23 +110,32 @@ def _files():
     return jsonify(result)
 
 
-@app.route('/search/<path:path>/<path:word>')
-def search(path, word):
-    logger.info(word)
-    dirs = os.listdir('%s%s' % ('/files/', path))
-    result = {}
-    result['result'] = []
+@app.route('/search/<path:path>/<path:word>/<path:_from>/<path:_to>')
+def search(path, word, _from=1, _to=1):
+    logger.info('%s %s %s %s' % (path, word, _from, _to))
+    logger.info(int(_from))
+    dirs = os.listdir('%s%s' % ('', path))
+    temp = []
     for d in dirs:
         if word in d:
-            result['result'].append(d)
+            temp.append(d)
 
+    result = {}
+    result['lengths'] = len(temp)
+    result['result'] = temp[int(_from) - 1:int(_to)]
     return jsonify(result)
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def error_404(e):
+    return render_template('404.html')
     return redirect('/')
 
+
+@app.errorhandler(500)
+def errer_500(e):
+    return render_template('404.html')
+    return redirect('/')
 
 if __name__ == '__main__':
     # app.debug = True
