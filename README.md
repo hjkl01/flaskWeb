@@ -46,3 +46,7 @@
 ```sh
 curl -i -H "Content-Type: application/json" -X POST -d '{"path":"config", "from":"1", "to":"5"}' http://127.0.0.1:8001/files
 ```
+
+## /search/folder_name/file_name/from/to
+
+> from 和to 需为数字
