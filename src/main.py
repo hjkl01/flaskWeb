@@ -114,7 +114,7 @@ def _files():
 def search(path, word, _from=1, _to=1):
     logger.info('%s %s %s %s' % (path, word, _from, _to))
     logger.info(int(_from))
-    dirs = os.listdir('%s%s' % ('', path))
+    dirs = os.listdir('%s%s' % ('/report/', path))
     temp = []
     for d in dirs:
         if word in d:

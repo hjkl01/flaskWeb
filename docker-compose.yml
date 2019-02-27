@@ -6,7 +6,8 @@ services:
       - "TZ=Asia/Shanghai"
     volumes:
       - ./logs:/app/logs
-      - /tmp:/config:ro
+      - /tmp:/report:ro
+        # - ../flaskWeb:/files:ro
       - ./sockets:/sockets
 
   nginx_server:
