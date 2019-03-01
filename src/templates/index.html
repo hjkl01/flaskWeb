@@ -189,15 +189,14 @@ hr {
 <h2 id="ansible">/ansible</h2>
 <h3 id="点击选择文件上传">点击选择文件上传</h3>
 <h4 id="第一个应为hosts">第一个应为hosts</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"></a>
-<a class="sourceLine" id="cb2-2" title="2">[<span class="ex">cisco</span>]</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="co"># 66.16.254.254</span></a>
-<a class="sourceLine" id="cb2-4" title="4"><span class="ex">66.16.254.1</span> ansible_ssh_user=cisco ansible_ssh_pass=cisco ansible_ssh_port=22</a>
-<a class="sourceLine" id="cb2-5" title="5"></a>
-<a class="sourceLine" id="cb2-6" title="6">[<span class="ex">h3c</span>]</a>
-<a class="sourceLine" id="cb2-7" title="7"><span class="co"># export ANSIBLE_HOST_KEY_CHECKING=False</span></a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="ex">66.5.254.130</span> ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22</a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="ex">66.10.254.1</span> ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1">[<span class="ex">cisco</span>]</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co"># 66.16.254.254</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="ex">66.16.254.1</span> ansible_ssh_user=cisco ansible_ssh_pass=cisco ansible_ssh_port=22</a>
+<a class="sourceLine" id="cb2-4" title="4"></a>
+<a class="sourceLine" id="cb2-5" title="5">[<span class="ex">h3c</span>]</a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co"># export ANSIBLE_HOST_KEY_CHECKING=False</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="ex">66.5.254.130</span> ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22</a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="ex">66.10.254.1</span> ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22</a></code></pre></div>
 <h4 id="第二个为task.yml">第二个为task.yml</h4>
 <div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">---</span></a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="ex">-</span> name: test route</a>
@@ -214,12 +213,18 @@ hr {
 <a class="sourceLine" id="cb3-13" title="13"></a>
 <a class="sourceLine" id="cb3-14" title="14">      <span class="ex">register</span>: output</a>
 <a class="sourceLine" id="cb3-15" title="15"></a>
-<a class="sourceLine" id="cb3-16" title="16">    <span class="ex">-</span> debug: msg=<span class="st">&quot;Hello World! {{ '{{' }} output.stdout {{ '}}' }}&quot;</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-16" title="16">    <span class="ex">-</span> debug: msg=<span class="st">&quot;Hello World! {{ '{{' }} '{{' {{ '}}' }} output.stdout {{ '{{' }} '}}' {{ '}}' }}&quot;</span></a></code></pre></div>
 <h2 id="files">/files</h2>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="ex">curl</span> -i -H <span class="st">&quot;Content-Type: application/json&quot;</span> -X POST -d <span class="st">&#39;{&quot;path&quot;:&quot;config&quot;, &quot;from&quot;:&quot;1&quot;, &quot;to&quot;:&quot;5&quot;}&#39;</span> http://127.0.0.1:8001/files</a></code></pre></div>
-<h2 id="searchfolder_namefile_namefromto">/search/folder_name/file_name/from/to</h2>
+<h2 id="search-folder_name-file_name-from-to">/search/{{ '{{' }} folder_name {{ '}}' }}/{{ '{{' }} file_name {{ '}}' }}/{{ '{{' }} from {{ '}}' }}/{{ '{{' }} to {{ '}}' }}</h2>
 <blockquote>
 <p>from 和to 需为数字</p>
 </blockquote>
+<h2 id="cron-command_id">/cron/{{ '{{' }} command_id {{ '}}' }}</h2>
+<blockquote>
+<p>command_id 为数据库里已经存在的command id</p>
+</blockquote>
+<h2 id="device">/device</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">curl</span> -i -H <span class="st">&quot;Content-Type: application/json&quot;</span> -X POST -d <span class="st">&#39;{&quot;deviceIds&quot;: &quot;3,13&quot;, &quot;command&quot;: &quot;show versio&quot;}&#39;</span> http://127.0.0.1:8001/files</a></code></pre></div>
 
 </body></html>

@@ -8,9 +8,7 @@
 ### 点击选择文件上传 
 
 #### 第一个应为hosts
-
 ```sh
-
 [cisco]
 # 66.16.254.254
 66.16.254.1 ansible_ssh_user=cisco ansible_ssh_pass=cisco ansible_ssh_port=22
@@ -42,11 +40,18 @@
 ```
 
 ## /files
-
 ```sh
 curl -i -H "Content-Type: application/json" -X POST -d '{"path":"config", "from":"1", "to":"5"}' http://127.0.0.1:8001/files
 ```
 
-## /search/folder_name/file_name/from/to
+## /search/{{ folder_name }}/{{ file_name }}/{{ from }}/{{ to }}
 
 > from 和to 需为数字
+
+## /cron/{{ command_id }}
+> command_id 为数据库里已经存在的command id
+
+## /device
+```sh
+curl -i -H "Content-Type: application/json" -X POST -d '{"deviceIds": "3,13", "command": "show versio"}' http://127.0.0.1:8001/files
+```
