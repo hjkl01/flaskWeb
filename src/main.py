@@ -43,11 +43,10 @@ def _device():
     return jsonify(Cron().devices_test_cmd(request.json))
 
 
-@app.route('/cron', methods=['GET', 'POST'])
-def _cron():
+@app.route('/cron/<command_id>', methods=['GET', 'POST'])
+def _cron(command_id):
     logger.info(request.method)
-    logger.info(request.json)
-    Cron().cron()
+    return jsonify(Cron().cron(command_id))
 
 
 def run_commands(cmd):

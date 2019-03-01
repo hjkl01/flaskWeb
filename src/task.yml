@@ -1,16 +1,118 @@
 ---
 - name: test route
-  hosts: cisco
+  hosts: h3c
   gather_facts: false
   connection: local
 
   tasks:
+    # - name: show version
+    #   cli_command:
+    #     command: show version
+    
     - name: test 
       ios_command:
         commands:
           - show version
             # - show interfaces
+            
+    # - name: test raw
+    #   raw: show version
 
+    # - name: test command
+    #   command: show version
+
+    # - name: test ce_command
+    #   ce_command:
+    #     commands: show version
+        # commands, host, interval, match, password, port, provider, retries, ssh_keyfile, timeout, transport, use_ssl, username, validate_certs, wait_for
+
+    # - name: run show version 
+    #   bigip_command:
+    #     commands: 
+    #     # - tmsh 
+    #       - show sys version
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: version
+
+    # - name: create vlan
+    #   bigip_command:
+    #     commands:
+    #       - create net vlan testvlan interfaces add { 1.3 }
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: create_vlan
+
+    # - name: create selfip
+    #   bigip_command:
+    #     commands:
+    #       - create net self self_test address 10.1.20.105/24 vlan testvlan allow-service add { default }
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: create_selfip
+    # 
+    # - name: create route
+    #   bigip_command:
+    #     commands:
+    #       - create net route route_test gw 10.1.20.1 network 10.1.30.0/24 
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: create_route
+
+    # - name: show wide ip
+    #   bigip_command:
+    #     commands:
+    #       - show gtm wideip 
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: show_wide_ip
+
+    # - name: create wide ip
+    #   bigip_command:
+    #     commands:
+    #       - create gtm wideip a www.abc.com pool-lb-mode round-robin pools add { pool_mzp }
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: create_wide_ip
+
+    # - name: modify wide ip
+    #   bigip_command:
+    #     commands:
+    #       -  modify gtm wideip a www.abc.com pool-lb-mode topology
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
+    #   register: modify_wide_ip
+
+    # - name: delete wide ip
+    #   bigip_command:
+    #     commands:
+    #       - del gtm wideip a www.abc.com
+    #     server: 66.3.50.102
+    #     password: default
+    #     user: root
+    #     validate_certs: no
+    #   delegate_to: localhost
       register: output
 
-    - debug: msg="Hello World! {{ output.stdout }}"
+    - debug: msg="result {{ output }}"

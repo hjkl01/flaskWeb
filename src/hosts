@@ -1,16 +1,13 @@
-[aliyun]
-47.75.196.41 ansible_ssh_user=ljl ansible_ssh_pass=jinlong ansible_ssh_port=1080
-
-[server]
-66.3.47.31 ansible_ssh_user=elk ansible_ssh_pass=jsnx2018 ansible_ssh_port=22
-
 [cisco]
-# 66.16.254.254
 66.16.254.1 ansible_ssh_user=cisco ansible_ssh_pass=cisco ansible_ssh_port=22
+66.16.254.254 ansible_ssh_user=cisco ansible_ssh_pass=cisco ansible_ssh_port=22
 
 [h3c]
 # export ANSIBLE_HOST_KEY_CHECKING=False
-66.10.254.254 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
+66.16.254.254 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
 66.5.254.130 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
-66.10.254.1 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
-66.10.254.2 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
+66.16.254.1 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
+66.16.254.2 ansible_ssh_user=jsnx ansible_ssh_pass=jmycisco ansible_ssh_port=22
+
+[f5]
+66.3.50.102 ansible_ssh_user=root ansible_ssh_pass=default ansible_ssh_port=22
