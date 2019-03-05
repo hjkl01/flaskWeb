@@ -65,7 +65,9 @@ class Cron:
                 _temp_dict['error'] = err
                 logger.error(err)
             result.append(_temp_dict)
-        return result
+        rresult = {}
+        rresult['result'] = result
+        return rresult
 
     def devices_test_cmd(self, _dict):
         result = {}
