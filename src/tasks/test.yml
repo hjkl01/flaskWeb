@@ -10,9 +10,9 @@
     #     command: show version
     
     - name: test 
-      ios_command:
-        commands:
-          - show version
+      # ios_command:
+      iosxr_command:
+        commands: show version
             # - show interfaces
             
     # - name: test raw
