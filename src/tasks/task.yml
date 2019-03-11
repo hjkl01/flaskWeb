@@ -27,3 +27,6 @@
     #       - configure terminal
 
     - debug: msg="Hello World! {{ output.stdout }}"
+    - debug: var=output
+    # - debug: var=output.stdout_lines
+
