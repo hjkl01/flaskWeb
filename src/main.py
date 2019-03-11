@@ -8,13 +8,15 @@ from ssh_cmd import ssh_cmd
 from cron_device_conf import Cron
 from flask import Flask, jsonify, redirect, request, render_template
 from werkzeug import secure_filename
+from concurrent.futures import ThreadPoolExecutor
+
+# DOCS https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+executor = ThreadPoolExecutor(2)
 app = Flask(__name__)
 
 from loguru import logger
 
-logger.add(
-    "logs/%s.log" % __file__.rstrip('.py'),
-    format="{time:MM-DD HH:mm:ss} {level} {message}")
+logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
 
 
 @app.route('/')
@@ -49,10 +51,16 @@ def _cron(command_id):
     return jsonify(Cron().cron(command_id))
 
 
+@app.route('/crons', methods=['GET', 'POST'])
+def _crons():
+    logger.info(request.method)
+    executor.submit(Cron().cron('all'))
+    return 'task cron was runned in background'
+
+
 def run_commands(cmd):
     my_env = os.environ.copy()
-    process = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, shell=True, env=my_env)
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, env=my_env)
     output, error = process.communicate()
     return output
 
@@ -65,22 +73,30 @@ def _ansible_example():
     return output
 
 
-@app.route('/ansible', methods=['GET', 'POST'])
-def _ansible():
-    if request.method == 'POST':
-        file = request.files['hosts']
-        hosts = secure_filename(file.filename)
-        file.save(os.path.join('%s/config' % os.getcwd(), hosts))
-        file = request.files['yml']
-        yml = secure_filename(file.filename)
-        file.save(os.path.join('%s/config' % os.getcwd(), yml))
-        logger.info('upload success %s %s' % (hosts, yml))
-        cmd = 'ansible-playbook -i config/%s config/%s' % (hosts, yml)
-        result = run_commands(cmd)
-        logger.info(result)
-        return result
-    else:
-        return render_template('upload.html')
+@app.route('/ansible/<filename>', methods=['GET', 'POST'])
+def _ansible(filename):
+    cmd = 'ansible-playbook -i /tasks/%s /tasks/%s.yml' % (filename, filename)
+    result = run_commands(cmd)
+    logger.info(result)
+    return result
+
+
+# @app.route('/ansible', methods=['GET', 'POST'])
+# def _ansible():
+#     if request.method == 'POST':
+#         file = request.files['hosts']
+#         hosts = secure_filename(file.filename)
+#         file.save(os.path.join('%s/config' % os.getcwd(), hosts))
+#         file = request.files['yml']
+#         yml = secure_filename(file.filename)
+#         file.save(os.path.join('%s/config' % os.getcwd(), yml))
+#         logger.info('upload success %s %s' % (hosts, yml))
+#         cmd = 'ansible-playbook -i config/%s config/%s' % (hosts, yml)
+#         result = run_commands(cmd)
+#         logger.info(result)
+#         return result
+#     else:
+#         return render_template('upload.html')
 
 
 @app.route('/files', methods=['GET', 'POST'])
@@ -135,6 +151,7 @@ def error_404(e):
 def errer_500(e):
     return render_template('404.html')
     return redirect('/')
+
 
 if __name__ == '__main__':
     # app.debug = True
