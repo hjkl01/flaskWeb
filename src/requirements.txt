@@ -1,4 +1,5 @@
 Flask==0.12.2
+uwsgi
 loguru
 paramiko
 ansible

@@ -4,20 +4,22 @@ services:
     build: src
     environment:
       - "TZ=Asia/Shanghai"
+    ports:
+      - 8001:8001
     volumes:
-      - ./src:/app
+      - ./app_logs:/app/logs
       - /tmp:/report:ro
-        # - ../flaskWeb:/files:ro
+        # - /tmp/ansible_tasks:/tasks
       - ./sockets:/sockets
 
-  nginx_server:
-    build: server 
-    restart: always
-    environment:
-      - "TZ=Asia/Shanghai"
-    ports:
-      - 8001:80
-    volumes:
-      - ./server/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx_log:/var/log/nginx
-      - ./sockets:/sockets
+        # nginx_server:
+        #   build: server 
+        #   restart: always
+        #   environment:
+        #     - "TZ=Asia/Shanghai"
+        #   ports:
+        #     - 8001:80
+        #   volumes:
+        #     - ./server/nginx.conf:/etc/nginx/conf.d/default.conf
+        #     - ./nginx_log:/var/log/nginx
+        #     - ./sockets:/sockets

@@ -6,6 +6,7 @@ from ssh_ping import run
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
 from cron_device_conf import Cron
+from ansible_api import ansible_api
 from flask import Flask, jsonify, redirect, request, render_template
 from werkzeug import secure_filename
 from concurrent.futures import ThreadPoolExecutor
@@ -65,20 +66,30 @@ def run_commands(cmd):
     return output
 
 
-@app.route('/ansible/example')
-def _ansible_example():
-    cmd = "ansible-playbook -i hosts task.yml"
-    output = run_commands(cmd)
-    logger.info(output)
-    return output
+# @app.route('/ansible/example')
+# def _ansible_example():
+#     cmd = "ansible-playbook -i hosts task.yml"
+#     output = run_commands(cmd)
+#     logger.info(output)
+#     return output
 
 
-@app.route('/ansible/<filename>', methods=['GET', 'POST'])
-def _ansible(filename):
-    cmd = 'ansible-playbook -i /tasks/%s /tasks/%s.yml' % (filename, filename)
+@app.route('/ansible_cmd/<filename>', methods=['GET', 'POST'])
+def _ansible_cmd(filename):
+    cmd = 'ansible-playbook -i tasks/%s tasks/%s.yml' % (filename, filename)
     result = run_commands(cmd)
-    logger.info(result)
     return result
+
+
+#@app.route('/test/<filename>', methods=['GET', 'POST'])
+@app.route('/ansible/<filename>')
+def _ansible(filename):
+    hosts_path = 'tasks/%s' % filename
+    yml_path = 'tasks/%s.yml' % filename
+    logger.info('host path : %s, yml path : %s' % (hosts_path, yml_path))
+    result = ansible_api(hosts_path, yml_path)
+    logger.info(result)
+    return jsonify(result)
 
 
 # @app.route('/ansible', methods=['GET', 'POST'])
