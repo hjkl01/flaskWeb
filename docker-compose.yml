@@ -9,7 +9,7 @@ services:
     volumes:
       - ./app_logs:/app/logs
       - /tmp:/report:ro
-        # - /tmp/ansible_tasks:/tasks
+      - /tmp/ansible_tasks:/app/tasks
       - ./sockets:/sockets
 
         # nginx_server:
