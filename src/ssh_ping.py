@@ -1,86 +1,113 @@
 #!/usr/bin/python
 
 import paramiko
+import os
 import re
-import multiprocessing
 from loguru import logger
 
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
 
-
-def ssh2(ip, port, username, passwd, target_ip, result_dict):
-    try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, port, username, passwd, timeout=5)
-        cmd = 'ping -c 3 %s' % target_ip
-
-        stdin, stdout, stderr = ssh.exec_command(cmd)
-        out = stdout.readlines()
-        if len(out)== 8 and 'Unreachable' not in str(out):
-            result_dict[target_ip] = True
-        else:
-            result_dict[target_ip] = False
-
-        logger.info('%s:\n%s' %(target_ip, out))
-        ssh.close()
-        # return out
-    except Exception as err:
-        if 'Error reading SSH protocol' in str(err):
-            ssh2(ip, port, username, passwd, target_ip, result_dict)
-        else:
-            result_dict[ip] = False
-            logger.error('%s %s' %(err, target_ip))
+import threading
 
 
-def run(_dict):
+class MyThread(threading.Thread):
+    def __init__(self, func, args=()):
+        super(MyThread, self).__init__()
+        self.func = func
+        self.args = args
+
+    def run(self):
+        self.result = self.func(*self.args)
+
+    def get_result(self):
+        try:
+            return self.result
+        except Exception:
+            return None
+
+
+class Ssh_ping:
+    def __init__(self, _dict):
+        self.ssh = paramiko.SSHClient()
+        self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.ssh.connect(_dict.get('server_ip'), _dict.get('server_port'), _dict.get('server_name'), _dict.get('server_passwd'), timeout=5)
+        logger.info('connect success %s' % self.ssh)
+
+    def ssh2(self, target_ip):
+        try:
+            cmd = 'ping -c 3 %s' % target_ip
+            logger.debug(cmd)
+
+            stdin, stdout, stderr = self.ssh.exec_command(cmd)
+            out = stdout.readlines()
+            logger.debug(out)
+            if len(out) == 8 and 'Unreachable' not in str(out):
+                result = True
+            else:
+                result = False
+
+            logger.info('%s:\n%s' % (target_ip, out))
+            return result
+        except Exception as err:
+            result = False
+            logger.error('%s %s' % (err, target_ip))
+            return result
+
+    def close(self):
+        self.ssh.close()
+
+
+def parse_dict(_dict):
     result = re.findall('(\d+)\.(\d+).(\d+).(\d+)', _dict.get('target_ip1'))[0]
     logger.info(result)
 
-    temp_ip = '%s.%s.%s.' %(result[0], result[1], result[2])
-    logger.info(temp_ip)
+    start_ip = '%s.%s.%s.' % (result[0], result[1], result[2])
+    logger.info(start_ip)
 
-    ip_start = int(re.findall('.*\.(\d+)', _dict.get('target_ip1'))[-1])
-    ip_end = int(re.findall('.*\.(\d+)', _dict.get('target_ip2'))[-1])
+    ip_from = int(re.findall('.*\.(\d+)', _dict.get('target_ip1'))[-1])
+    ip_to = int(re.findall('.*\.(\d+)', _dict.get('target_ip2'))[-1])
+    return start_ip, ip_from, ip_to
 
-    manager = multiprocessing.Manager()
-    result_dict = manager.dict()
-    jobs = []
-    for i in range(ip_start, ip_end):
-        cmd = ['ping -c 3 %s%s' %(temp_ip, i)]
-        logger.info(cmd)
-        p = multiprocessing.Process(
-            target=ssh2,
-            args=(
-                _dict.get('server_ip'),
-                _dict.get('server_port'),
-                _dict.get('server_name'),
-                _dict.get('server_passwd'),
-                '%s%s' %(temp_ip, i),
-                result_dict,
-            ))
-        jobs.append(p)
-        p.start()
 
-    for proc in jobs:
-        proc.join()
-    result = dict(result_dict)
-    if len(list(result.keys()))> 1:
-        result[_dict.get('server_ip')] = True
+def ssh_ping(_dict):
+    _ping = lambda cmds: os.popen(cmds[-1]).readlines()
+    start_ip, ip_from, ip_to = parse_dict(_dict)
+    if 'server_ip' not in _dict.keys():
+        result = {}
+        for i in range(ip_from, ip_to):
+            cmds = ['ping -c 3 %s%s' % (start_ip, i)]
+            logger.info(cmds)
+            temp = _ping(cmds)
+            logger.info(temp)
+            if len(temp) == 8 and 'Unreachable' not in str(temp):
+                result['%s%s' % (start_ip, i)] = True
+            else:
+                result['%s%s' % (start_ip, i)] = False
+    else:
+        ob = Ssh_ping(_dict)
+        result = {}
+        for i in range(ip_from, ip_to):
+            target_ip = '%s%s' % (start_ip, i)
+            temp = ob.ssh2(target_ip)
+            result[target_ip] = temp
+        ob.close()
     logger.info(result)
-    logger.info(len(result.keys()))
-    # logger.info(type(dict(_dict)))
     return result
 
 
 if __name__ == '__main__':
     _dict = {
-        'server_ip': '88.16.153.196',
+        'server_ip': '66.3.47.31',
         'server_port': '22',
-        'server_name': 'ljl',
-        'server_passwd': '1',
-        'target_ip1': '88.16.153.150',
-        'target_ip2': '88.16.153.200',
+        'server_name': 'dc',
+        'server_passwd': '2019',
+        'target_ip1': '66.3.47.30',
+        'target_ip2': '66.3.47.35',
     }
-    run(_dict)
-
+    _dict = {
+        'target_ip1': '88.16.153.23',
+        'target_ip2': '88.16.153.25',
+    }
+    ssh_ping(_dict)
+    # curl -i -H "Content-Type: application/json" -X POST -d '{"target_ip1":"66.3.47.30", "target_ip2":"66.3.47.35"}' http://127.0.0.1:8001/ping
+    # curl -i -H "Content-Type: application/json" -X POST -d '{"server_ip":"66.3.47.31", "server_port":"22","server_name":"dc","server_passwd":"2019", "target_ip1":"66.3.47.30", "target_ip2":"66.3.47.35"}' http://127.0.0.1:8001/ping

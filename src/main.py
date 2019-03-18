@@ -2,7 +2,7 @@
 
 import subprocess
 import os
-from ssh_ping import run
+from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
 from cron_device_conf import Cron
@@ -29,7 +29,7 @@ def index():
 def ping_ip():
     logger.info(request.method)
     logger.info(request.json)
-    return jsonify(run(request.json))
+    return jsonify(ssh_ping(request.json))
 
 
 @app.route('/cmd', methods=['POST'])
