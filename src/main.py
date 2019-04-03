@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from loguru import logger
 import subprocess
 import os
 from ssh_ping import ssh_ping
@@ -15,7 +16,6 @@ from concurrent.futures import ThreadPoolExecutor
 executor = ThreadPoolExecutor(2)
 app = Flask(__name__)
 
-from loguru import logger
 
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
 
@@ -81,7 +81,7 @@ def _ansible_cmd(filename):
     return result
 
 
-#@app.route('/test/<filename>', methods=['GET', 'POST'])
+# @app.route('/test/<filename>', methods=['GET', 'POST'])
 @app.route('/ansible/<filename>')
 def _ansible(filename):
     hosts_path = 'tasks/%s' % filename

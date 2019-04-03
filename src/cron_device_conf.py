@@ -83,7 +83,7 @@ class Cron:
                 'cmd': _dict.get('command')
             }
             tmp_result = ssh_cmd(cmd_dict)
-            result[device_id] = tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '')
+            result[device_id] = tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '').replace('"', '\\"')
         logger.info(result)
         return result
 
