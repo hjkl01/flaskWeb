@@ -17,8 +17,9 @@ def ssh_cmd(_dict):
         timeout=5,
         allow_agent=False,
         look_for_keys=False)
-    stdin, stdout, stderr = ssh.exec_command(_dict.get('cmd'))
-    out = stdout.read()
+    logger.info(_dict)
+    stdin, stdout, stderr = ssh.exec_command('%s\n' % _dict.get('cmd'))
+    out = '\n'.join(stdout.readlines())
     logger.info(out)
     ssh.close()
     result = {"result": out}
@@ -31,6 +32,7 @@ if __name__ == '__main__':
         'port': '22',
         'username': 'jsnx',
         'password': 'jmycisco',
-        'cmd': 'display current-configuration'
+        # 'cmd': 'display current-configuration'
+        'cmd': 'display clock'
     }
     ssh_cmd(_dict)
