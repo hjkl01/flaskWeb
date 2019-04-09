@@ -4,3 +4,4 @@ loguru
 paramiko
 ansible
 mysql-connector
+netmiko
