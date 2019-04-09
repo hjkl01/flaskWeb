@@ -3,6 +3,7 @@
 from loguru import logger
 import subprocess
 import os
+from common import _try
 from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
@@ -26,6 +27,7 @@ def index():
 
 
 @app.route('/ping', methods=['POST'])
+@_try
 def ping_ip():
     logger.info(request.method)
     logger.info(request.json)
@@ -33,6 +35,7 @@ def ping_ip():
 
 
 @app.route('/cmd', methods=['POST'])
+@_try
 def run_cmd():
     logger.info(request.method)
     logger.info(request.json)
@@ -40,6 +43,7 @@ def run_cmd():
 
 
 @app.route('/device', methods=['POST'])
+@_try
 def _device():
     logger.info(request.method)
     logger.info(request.json)
@@ -47,12 +51,14 @@ def _device():
 
 
 @app.route('/cron/<command_id>', methods=['GET', 'POST'])
+@_try
 def _cron(command_id):
     logger.info(request.method)
     return jsonify(Cron().cron(command_id))
 
 
 @app.route('/crons', methods=['GET', 'POST'])
+@_try
 def _crons():
     logger.info(request.method)
     executor.submit(Cron().cron('all'))
@@ -75,6 +81,7 @@ def run_commands(cmd):
 
 
 @app.route('/ansible_cmd/<filename>', methods=['GET', 'POST'])
+@_try
 def _ansible_cmd(filename):
     cmd = 'ansible-playbook -i tasks/%s tasks/%s.yml' % (filename, filename)
     result = run_commands(cmd)
@@ -83,6 +90,7 @@ def _ansible_cmd(filename):
 
 # @app.route('/test/<filename>', methods=['GET', 'POST'])
 @app.route('/ansible/<filename>')
+@_try
 def _ansible(filename):
     hosts_path = 'tasks/%s' % filename
     yml_path = 'tasks/%s.yml' % filename
@@ -111,6 +119,7 @@ def _ansible(filename):
 
 
 @app.route('/files', methods=['GET', 'POST'])
+@_try
 def _files():
     logger.info(request.json)
     try:
@@ -137,6 +146,7 @@ def _files():
 
 
 @app.route('/search/<path:path>/<path:word>/<path:_from>/<path:_to>')
+@_try
 def search(path, word, _from=1, _to=1):
     logger.info('%s %s %s %s' % (path, word, _from, _to))
     logger.info(int(_from))
@@ -152,16 +162,11 @@ def search(path, word, _from=1, _to=1):
     return jsonify(result)
 
 
-@app.errorhandler(404)
-def error_404(e):
-    return render_template('404.html')
-    return redirect('/')
-
-
 @app.errorhandler(500)
 def errer_500(e):
     return render_template('404.html')
     return redirect('/')
+
 
 
 if __name__ == '__main__':
