@@ -77,7 +77,7 @@ class Cron:
     def devices_test_cmd(self, _dict):
         result = {}
         for device_id in _dict.get('deviceIds').split(','):
-            sql = 'select ip_adress, user_name, device_password from device_tb where device_id = %s' % device_id
+            sql = 'select ip_adress, user_name, device_password,factory_id from device_tb where device_id = %s' % device_id
             device = self._select(sql)[-1]
             logger.info(device)
             cmd_dict = {
@@ -85,10 +85,15 @@ class Cron:
                 'port': '22',
                 'username': device[1],
                 'password': device[2],
+                'factory_id': device[3],
                 'cmd': _dict.get('command')
             }
             tmp_result = ssh_cmd(cmd_dict)
-            result[device_id] = tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '').replace('"', '\\"')
+            try:
+                result[device_id] = tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '').replace('"', '\\"')
+            except:
+                result[device_id] = tmp_result.get('result').replace('\r', '').replace('\n', '').replace('"', '\\"')
+
         logger.info(result)
         return result
 
