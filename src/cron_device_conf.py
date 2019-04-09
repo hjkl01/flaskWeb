@@ -56,9 +56,14 @@ class Cron:
                 tmp_result = ssh_cmd(_dict)
                 logger.info(tmp_result)
                 # java 端会提前判断command是否可执行，省略判断
-                sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(
+                try:
+                    sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(
                     command[0], command[2],
-                    tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', ''), str(time.ctime()))
+                    tmp_result.get('result').replace('\r', '').replace('\n', '').replace('"', '\\"'), str(time.ctime()))
+                except:
+                    sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(
+                    command[0], command[2],
+                    tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '').replace('"', '\\"'), str(time.ctime()))
                 # logger.info(sql)
                 self._insert(sql)
             except Exception as err:

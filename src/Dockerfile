@@ -2,7 +2,7 @@ FROM ubuntu:latest
 COPY sources.list /etc/apt/sources.list
 COPY ping /usr/local/bin/
 RUN apt update -y
-RUN apt install python3 python3-pip sshpass -y
+RUN apt install python3 python3-pip sshpass git -y
 RUN mkdir /sockets
 COPY . /app
 COPY ansible.cfg /etc/ansible/ansible.cfg

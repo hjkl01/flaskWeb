@@ -7,10 +7,10 @@ services:
     ports:
       - 8001:8001
     volumes:
-      - ./app_logs:/app/logs
+      - ./src:/app
       - /tmp:/report:ro
       - /tmp/ansible_tasks:/app/tasks
-      - ./sockets:/sockets
+      # - ./sockets:/sockets
 
         # nginx_server:
         #   build: server 
