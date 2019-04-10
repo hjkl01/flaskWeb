@@ -37,33 +37,40 @@ class Cron:
         elif command_id == None:
             return
         else:
-            sql = "select %s from %s where command_id=%s" % ('device_id, command, command_id',
-                                                             'device_config_command_tb', command_id)
+            sql = "select %s from %s where command_id=%s" % ('device_id, command, command_id', 'device_config_command_tb', command_id)
 
         commands = self._select(sql)
         logger.info(commands)
         result = []
         for command in commands:
-            _temp_dict = {'device_id': command[0], 'command': command[1], 'command_id': command[2], 'error': ''}
+            _temp_dict = {
+                'device_id': command[0],
+                'command': command[1],
+                'command_id': command[2],
+                'error': ''
+            }
             sql = 'select ip_adress, user_name, device_password, factory_id from device_tb where device_id = %s' % command[0]
             # logger.info(sql)
             device = self._select(sql)[-1]
             # logger.info(devices_info)
             logger.info(device)
-            _dict = {'ip': device[0], 'port': '22', 'username': device[1], 'password': device[2], 'cmd': command[1], 'factory_id': device[3]}
+            _dict = {
+                'ip': device[0],
+                'port': '22',
+                'username': device[1],
+                'password': device[2],
+                'cmd': command[1],
+                'factory_id': device[3]
+            }
 
             try:
                 tmp_result = ssh_cmd(_dict)
                 logger.info(tmp_result)
                 # java 端会提前判断command是否可执行，省略判断
                 try:
-                    sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(
-                        command[0], command[2],
-                        tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '').replace('"', '\\"'), str(time.ctime()))
+                    sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(command[0], command[2], tmp_result.get('result').decode('utf8').replace('"', '\\"'), str(time.ctime()))
                 except:
-                    sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(
-                        command[0], command[2],
-                        tmp_result.get('result').replace('\r', '').replace('\n', '').replace('"', '\\"'), str(time.ctime()))
+                    sql = 'insert into device_config_tb (device_id,command_id,config_content,config_version) values ("{0}", "{1}", "{2}", "{3}")'.format(command[0], command[2], tmp_result.get('result').replace('"', '\\"'), str(time.ctime()))
                 # logger.info(sql)
                 self._insert(sql)
             except Exception as err:
@@ -77,7 +84,7 @@ class Cron:
     def devices_test_cmd(self, _dict):
         result = {}
         for device_id in _dict.get('deviceIds').split(','):
-            sql = 'select ip_adress, user_name, device_password,factory_id from device_tb where device_id = %s' % device_id
+            sql = 'select ip_adress, user_name, device_password,factory_id  from device_tb where device_id = %s' % device_id
             device = self._select(sql)[-1]
             logger.info(device)
             cmd_dict = {
@@ -90,10 +97,9 @@ class Cron:
             }
             tmp_result = ssh_cmd(cmd_dict)
             try:
-                result[device_id] = tmp_result.get('result').decode('utf8').replace('\r', '').replace('\n', '').replace('"', '\\"')
+                result[device_id] = tmp_result.get('result').decode('utf8').replace('"', '\\"')
             except:
-                result[device_id] = tmp_result.get('result').replace('\r', '').replace('\n', '').replace('"', '\\"')
-
+                result[device_id] = tmp_result.get('result').replace('"', '\\"')
         logger.info(result)
         return result
 

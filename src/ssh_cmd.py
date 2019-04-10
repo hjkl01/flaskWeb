@@ -14,16 +14,16 @@ def ssh_cmd(_dict):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(
         _dict.get('ip'),
-        _dict.get('port'),
-        _dict.get('username'),
-        _dict.get('password'),
+        port=_dict.get('port'),
+        username=_dict.get('username'),
+        password=_dict.get('password'),
         timeout=5,
         allow_agent=False,
         look_for_keys=False)
     logger.info(_dict)
     # ssh.exec_command('terminal length 0 \n')
     stdin, stdout, stderr = ssh.exec_command('%s\n' % _dict.get('cmd'))
-    out = '\n'.join(stdout.readlines())
+    out = stdout.read()
     logger.info(out)
     ssh.close()
     result = {"result": out}
@@ -31,10 +31,11 @@ def ssh_cmd(_dict):
 
 
 def connect_huawei(_dict):
-    connection = netmiko.ConnectHandler(ip=_dict.get('ip'),
-                                        device_type='huawei',
-                                        username=_dict.get('username'),
-                                        password=_dict.get('password'))
+    connection = netmiko.ConnectHandler(
+        ip=_dict.get('ip'),
+        device_type='huawei',
+        username=_dict.get('username'),
+        password=_dict.get('password'))
     logger.info(_dict)
     result = connection.find_prompt()
     result += connection.send_command('%s\n' % _dict.get('cmd'))
@@ -46,13 +47,13 @@ def connect_huawei(_dict):
 
 if __name__ == '__main__':
     _dict = {
-        'ip': '66.10.254.2',
+        'ip': '32.3.242.1',
         'port': '22',
         'username': 'jsnx',
         'password': 'jmycisco',
         'factory_id': 4,
         # 'cmd': 'display current-configuration'
         # 'cmd': 'display clock'
-        'cmd': 'display cpu'
+        'cmd': 'get conf'
     }
     ssh_cmd(_dict)
