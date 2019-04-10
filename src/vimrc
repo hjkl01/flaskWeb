@@ -1,0 +1,280 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number
+set relativenumber
+" Sets how many lines of history VIM has to remember
+set history=500
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" Fast saving
+" nmap <leader>w :w!<cr>
+" :W sudo saves the file 
+" (useful for handling the permission-denied error)
+command W w 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set 5 lines to the cursor - when moving vertically using j/k
+set so=5
+
+" Avoid garbled characters in Chinese language windows OS
+let $LANG='en' 
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" Turn on the WiLd menu
+set wildmenu
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+
+"Always show current position
+set ruler
+
+" Height of the command bar
+set cmdheight=2
+
+" A buffer becomes hidden when it is abandoned
+set hid
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases 
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+
+" Makes search act like search in modern browsers
+set incsearch 
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw 
+
+" For regular expressions turn magic on
+set magic
+
+" Show matching brackets when text indicator is over them
+set showmatch 
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" Properly disable sound on errors on MacVim
+if has("gui_macvim")
+    autocmd GUIEnter * set vb t_vb=
+endif
+
+" 突出显示当前行
+set cursorline
+" 突出显示当前列
+set cursorcolumn
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enable syntax highlighting
+syntax enable 
+
+set background=dark
+
+" Set extra options when running in GUI mode
+if has("gui_running")
+    set guioptions-=T
+    set guioptions-=e
+    set t_Co=256
+    set guitablabel=%M\ %t
+endif
+
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs ;)
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+" 当光标一段时间保持不动了，就禁用高亮
+autocmd cursorhold * set nohlsearch
+" 当输入查找命令时，再启用高亮
+noremap n :set hlsearch<cr>n
+noremap N :set hlsearch<cr>N
+noremap / :set hlsearch<cr>/
+noremap ? :set hlsearch<cr>?
+noremap * *:set hlsearch<cr>
+
+nnoremap <expr> n  'Nn'[v:searchforward]
+nnoremap <expr> N  'nN'[v:searchforward]
+
+
+" 打开文件时恢复光标位置
+if has("autocmd")
+    autocmd BufReadPost *  if line("'\"") > 0 && line("'\"") <= line("$") |   exe "normal g`\"" |  endif
+endif
+
+"以下是改键
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+noremap H 0
+noremap L $
+
+nnoremap k gk
+nnoremap gk k
+nnoremap j gj
+nnoremap gj j
+
+
+" 调整缩进后自动选中，方便再次操作
+vnoremap < <gv
+vnoremap > >gv
+
+"新建.py,.sh文件，自动插入文件头
+autocmd BufNewFile *.sh,*.py exec ":call SetTitle()"
+func! SetTitle()
+    if &filetype == 'sh'
+        call setline(1,"\#!/bin/bash")
+        call append(line("."), "")
+    elseif &filetype == 'python'
+        call setline(1,"#!/usr/bin/env python3")
+        "call append(line("."),"# coding=utf-8")
+        call append(line(".")+1, "")
+        call append(line(".")+8, "")
+    endif
+    "新建文件后，自动定位到文件末尾
+endfunc
+autocmd BufNewFile * normal G
+
+"au BufWrite *.sh,*.py exec ":Autoformat"
+map <F1> :Autoformat<CR>
+
+"map <F1> :PymodeLintAuto<CR>
+"map <F1> :call FormartSrc()<CR><CR>
+
+"定义FormartSrc()
+func! FormartSrc()
+    exec "w"
+    if executable('yapf')
+        echo "yapf exists, formating..."
+    else
+        echo "installing yapf, wait a moment..."
+        exec 'r !pip install yapf'
+    endif
+    if &filetype == 'py'||&filetype == 'python'
+        "exec 'r !autopep8 -i --aggressive --ignore=E501 %'
+        " 废弃autopep8 执行peewee的查询语句时会把 `== None` 改成 `is None`, peewee报错
+        "exec 'r !autopep8 -i --max-line-length 80 %'
+        "change 79 to 120
+        exec 'r !yapf --style ~/.yapf/style.cfg -i %'
+        "exec 'r !yapf -i %'
+    else
+        exec "normal gg=G"
+        return
+    endif
+    exec "e! %"
+endfunc
+"结束定义FormartSrc
+
+
+"run python file
+map <F2> :call RunPyGoFile()<CR>
+func! RunPyGoFile()
+    exec "w"
+    if &filetype == 'python'
+        exec "!time ~/.virtualenv/py3/bin/python %"
+    elseif &filetype == 'go'
+        exec "!time go run % "
+    elseif &filetype == 'sh'
+        exec "!time sh %"
+    elseif &filetype == 'javascript.jsx'
+        exec "!time node %"
+    else
+        echo &filetype
+    endif
+endfunc
+
+command! JsonFormat :execute '%!python2.7 -m json.tool'
+            \ | :execute '%!python2.7 -c "import re,sys;sys.stdout.write(re.sub(r\"\\\u[0-9a-f]{4}\", lambda m:m.group().decode(\"unicode_escape\").encode(\"utf-8\"), sys.stdin.read()))"'
+
+
+"列出当前目录文件
+map <F3> :NERDTreeToggle<CR>
+imap <F3> <ESC> :NERDTreeToggle<CR>
+
+nmap <F4> :TagbarToggle<CR>
+
+"map <F5> :YcmRestartServer<CR>
+
+map <F7> : bp<CR>
+map <F9> : bn<CR>
+
+set pastetoggle=<F10>
+
+"为方便复制，用<F2>开启/关闭行号显示:
+" nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
+
+nnoremap <F11> :call Setnonumber() <CR>
+func! Setnonumber()
+    exec "set norelativenumber"
+    exec "set nonumber"
+endfunc
+nnoremap <F12> :set relativenumber <CR>
+
