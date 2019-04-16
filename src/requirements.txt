@@ -5,3 +5,4 @@ paramiko
 ansible
 mysql-connector
 netmiko
+telnetlib

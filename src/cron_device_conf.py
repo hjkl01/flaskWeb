@@ -4,6 +4,7 @@ import time
 import yaml
 import mysql.connector
 from ssh_cmd import ssh_cmd
+from telnet_cmd import telnet_cmd
 from loguru import logger
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
 
@@ -49,7 +50,7 @@ class Cron:
                 'command_id': command[2],
                 'error': ''
             }
-            sql = 'select ip_adress, user_name, device_password, factory_id from device_tb where device_id = %s' % command[0]
+            sql = 'select ip_adress, user_name, device_password, factory_id,login_function from device_tb where device_id = %s' % command[0]
             # logger.info(sql)
             device = self._select(sql)[-1]
             # logger.info(devices_info)
@@ -63,8 +64,11 @@ class Cron:
                 'factory_id': device[3]
             }
 
-            try:
+            if device[4] == '3':
+                tmp_result = telnet_cmd(_dict)
+            else:
                 tmp_result = ssh_cmd(_dict)
+            try:
                 logger.info(tmp_result)
                 # java 端会提前判断command是否可执行，省略判断
                 try:
@@ -84,7 +88,7 @@ class Cron:
     def devices_test_cmd(self, _dict):
         result = {}
         for device_id in _dict.get('deviceIds').split(','):
-            sql = 'select ip_adress, user_name, device_password,factory_id  from device_tb where device_id = %s' % device_id
+            sql = 'select ip_adress, user_name,device_password,factory_id,login_function from device_tb where device_id = %s' % device_id
             device = self._select(sql)[-1]
             logger.info(device)
             cmd_dict = {
@@ -95,7 +99,10 @@ class Cron:
                 'factory_id': device[3],
                 'cmd': _dict.get('command')
             }
-            tmp_result = ssh_cmd(cmd_dict)
+            if device[4] == '3':
+                tmp_result = telnet_cmd(cmd_dict)
+            else:
+                tmp_result = ssh_cmd(cmd_dict)
             try:
                 result[device_id] = tmp_result.get('result').decode('utf8').replace('"', '\\"')
             except:
