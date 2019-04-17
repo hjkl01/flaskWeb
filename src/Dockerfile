@@ -1,8 +1,8 @@
 FROM ubuntu:latest
 COPY sources.list /etc/apt/sources.list
-COPY ping /usr/local/bin/
 RUN apt update -y
 RUN apt install python3 python3-pip sshpass git vim iputils-ping -y
+RUN apt install nmap -y
 # RUN mkdir /sockets
 COPY . /app
 COPY vimrc /root/.vimrc

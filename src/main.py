@@ -7,6 +7,7 @@ from common import _try
 from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
+from _nmap import run as nmap
 from cron_device_conf import Cron
 from ansible_api import ansible_api
 from flask import Flask, jsonify, redirect, request, render_template
@@ -32,6 +33,11 @@ def ping_ip():
     logger.info(request.method)
     logger.info(request.json)
     return jsonify(ssh_ping(request.json))
+
+
+@app.route('/ping', methods=['POST'])
+def test_ping_nmap():
+    return jsonify(nmap())
 
 
 @app.route('/cmd', methods=['POST'])
@@ -166,7 +172,6 @@ def search(path, word, _from=1, _to=1):
 def errer_500(e):
     return render_template('404.html')
     return redirect('/')
-
 
 
 if __name__ == '__main__':
