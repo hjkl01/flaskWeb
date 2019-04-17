@@ -35,9 +35,28 @@ def ping_ip():
     return jsonify(ssh_ping(request.json))
 
 
-@app.route('/ping', methods=['POST'])
+@app.route('/test')
+def test():
+    return render_template('test.html')
+
+
+@app.route('/test_ping')
 def test_ping_nmap():
     return jsonify(nmap())
+
+
+@app.route('/test_delete')
+def test_delete():
+    os.system('rm ping_nmap_result.txt')
+    return 'delete ping_nmap_result.txt success !'
+
+
+@app.route('/test_view')
+def test_view():
+    with open('ping_nmap_result.txt', 'r') as file:
+        con = file.readlines()
+    result = '</br>'.join(con)
+    return result
 
 
 @app.route('/cmd', methods=['POST'])
