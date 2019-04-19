@@ -12,8 +12,8 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss}
 def _nmap(ip, port):
     result = os.popen('nmap %s -p %s' % (ip, port))
     result = result.readlines()
-    for i in range(len(result)):
-        logger.info('%s:%s' % (i, result[i]))
+    # for i in range(len(result)):
+    #     logger.debug('%s:%s' % (i, result[i]))
     logger.info(result)
     if len(result) > 6:
         temp = result[6]
@@ -33,11 +33,12 @@ def _ping(ip):
     logger.info(out)
     temp = re.findall('(\d+)\%', out)
     logger.info(temp)
-    if len(temp) >0 and temp[0] == '0':
+    if len(temp) > 0 and temp[0] == '0':
         result = True
     else:
         result = False
     return result
+
 
 def get_result(c):
     logger.info(c)
@@ -47,6 +48,7 @@ def get_result(c):
     # [('VS_PK_new_txqd_yancheng_8866', '32.4.211.9', '8866')]
     if temp == []:
         logger.info('c is :%s' % c)
+        return
     else:
         temp = list(temp[-1])
         logger.info(temp)
@@ -61,10 +63,9 @@ def get_result(c):
             _dict['nmap'] = _nmap(temp[1], temp[2])
 
     with open('ping_nmap_result.txt', 'a') as file:
-        import json
+        # import json
         # file.write(json.dumps(result, ensure_ascii=False, indent=4))
         file.write('%s\n' % str(_dict))
-        
 
 
 def run():
@@ -73,14 +74,14 @@ def run():
     for c in con:
         p = Process(target=get_result, args=(c,))
         p.start()
-        # p.join()
         time.sleep(0.5)
         # get_result(c)
-        # break
+    return 'finish !'
 
 
 if __name__ == '__main__':
-    # ip = '127.0.0.1'
-    # port = '23'
+    ip = '127.0.0.2'
+    port = '23'
+    _ping(ip)
     # print(_nmap(ip, port))
-    run()
+    # run()
