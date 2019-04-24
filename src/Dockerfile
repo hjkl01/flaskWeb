@@ -11,4 +11,5 @@ COPY ansible.cfg /etc/ansible/ansible.cfg
 WORKDIR /app
 RUN pip3 install -r /app/requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
 # CMD /usr/local/bin/uwsgi --ini /app/uwsgi.ini
-CMD python3 main.py
+# CMD python3 main.py
+CMD gunicorn -c gunicorn.py main:app
