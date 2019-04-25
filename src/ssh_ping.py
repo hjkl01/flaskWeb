@@ -86,7 +86,7 @@ def ssh_ping(_dict):
     if 'server_ip' not in _dict.keys():
         result = {}
 
-        pool = multiprocessing.Pool(processes=4)
+        pool = multiprocessing.Pool(processes=128)
         temp_results = []
         for i in range(ip_from, ip_to):
             ip = '%s%s' % (start_ip, i)

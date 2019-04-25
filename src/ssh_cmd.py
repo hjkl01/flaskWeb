@@ -11,12 +11,18 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'),
 def ssh_cmd(_dict):
     logger.info(_dict.get('factory_id'))
     if _dict.get('factory_id'):
+        factory_ids = {
+            "4": "huawei",
+            "8": "cisco",
+            "12": "juniper",
+            "16": None,
+        }
         new_dict = {
             'ip': _dict.get('ip'),
             'port': _dict.get('port'),
             'username': _dict.get('username'),
             'password': _dict.get('password'),
-            'device_type': _dict.get('device_type')
+            'device_type': factory_ids.get(str(_dict.get('factory_id')))
         }
         logger.info(new_dict)
         return use_netmiko(new_dict, _dict.get('cmd'))
@@ -68,7 +74,7 @@ if __name__ == '__main__':
         'port': '22',
         'username': 'jsnx',
         'password': 'jmycisco',
-        'device_type': 'juniper',
+        # 'device_type': 'juniper',
         'factory_id': 4,
         # 'cmd': 'display current-configuration'
         # 'cmd': 'display clock'
