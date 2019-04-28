@@ -114,7 +114,6 @@ def _ansible_cmd(filename):
     return result
 
 
-# @app.route('/test/<filename>', methods=['GET', 'POST'])
 @app.route('/ansible/<filename>')
 @_try
 def _ansible(filename):
@@ -188,9 +187,9 @@ def search(path, word, _from=1, _to=1):
     return jsonify(result)
 
 
-@app.errorhandler(500)
+@app.errorhandler(404)
 def errer_500(e):
-    return render_template('404.html')
+    return jsonify({'error':404})
     return redirect('/')
 
 

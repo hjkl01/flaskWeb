@@ -35,7 +35,7 @@ class Ssh_ping:
 
     def ssh2(self, target_ip):
         try:
-            cmd = 'ping -c 3 %s' % target_ip
+            cmd = 'ping -c 3 -W 3 %s' % target_ip
             logger.debug(cmd)
 
             stdin, stdout, stderr = self.ssh.exec_command(cmd)
@@ -70,7 +70,7 @@ def parse_dict(_dict):
 
 
 def _ping(ip):
-    cmd = 'ping -c 3 %s' % ip
+    cmd = 'ping -c 3 -W 3 %s' % ip
     logger.info(cmd)
     out = os.popen(cmd).readlines()
     if len(out) == 8 and 'Unreachable' not in str(out):
