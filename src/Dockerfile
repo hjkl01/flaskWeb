@@ -3,7 +3,10 @@ COPY sources.list /etc/apt/sources.list
 RUN echo "Asia/Shanghai" > /etc/timezone
 RUN apt update -y
 RUN apt install python3 python3-pip sshpass git vim iputils-ping -y
-RUN apt install nmap cron -y
+RUN apt install nmap cron python2.7 python-pip -y
+RUN pip install virtualenv -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+RUN virtualenv -p /usr/bin/python2 /p2
+RUN /p2/bin/pip install ansible -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
 # RUN mkdir /sockets
 COPY . /app
 COPY vimrc /root/.vimrc

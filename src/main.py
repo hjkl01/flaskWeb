@@ -109,7 +109,7 @@ def run_commands(cmd):
 @app.route('/ansible_cmd/<filename>', methods=['GET', 'POST'])
 @_try
 def _ansible_cmd(filename):
-    cmd = 'ansible-playbook -i tasks/%s tasks/%s.yml' % (filename, filename)
+    cmd = '/p2/bin/ansible-playbook -i tasks/%s tasks/%s.yml' % (filename, filename)
     result = run_commands(cmd)
     return result
 
@@ -195,4 +195,6 @@ def errer_500(e):
 
 if __name__ == '__main__':
     # app.debug = True
-    app.run(host='0.0.0.0', port=8001)
+    # app.run(host='0.0.0.0', port=8001)
+    # app.run(host='0.0.0.0', port=8001, threaded=True)
+    app.run(host='0.0.0.0', port=8001, processes=4)

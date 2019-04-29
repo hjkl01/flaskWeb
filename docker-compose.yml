@@ -9,6 +9,9 @@ services:
       - ./src:/app
       - /tmp:/report:ro
       - /tmp/ansible_tasks:/app/tasks
+      - ./config/timezone:/etc/timezone
+      - ./config/localtime:/etc/localtime
+
       # - ./sockets:/sockets
 
         # nginx_server:

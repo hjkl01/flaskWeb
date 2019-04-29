@@ -1,10 +1,12 @@
 Flask==0.12.2
+loguru
 # uwsgi
 # gunicorn
 # gevent
-loguru
-paramiko
 ansible
 mysql-connector
+paramiko
 netmiko
 python-crontab
+
+mycli
