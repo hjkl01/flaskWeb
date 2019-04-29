@@ -13,7 +13,7 @@ def ssh_cmd(_dict):
     if _dict.get('factory_id'):
         factory_ids = {
             "4": "huawei",
-            "8": "cisco",
+            "8": "cisco_nxos",
             "12": "juniper",
             "16": None,
         }
@@ -59,25 +59,26 @@ def use_netmiko(_dict, cmd):
     while 'more' in temp:
         temp = net_connect.send_command_timing(
             " \n", strip_command=False, strip_prompt=False)
-        logger.info(temp)
+        # print(temp)
         output += temp
         i += 1
         logger.info(i)
 
     net_connect.disconnect()
-    logger.info(output)
+    # logger.info(output)
+    return {"result":output}
 
 
 if __name__ == '__main__':
     _dict = {
-        'ip': '66.5.253.5',
+        'ip': '32.3.242.1',
         'port': '22',
         'username': 'jsnx',
         'password': 'jmycisco',
         # 'device_type': 'juniper',
-        'factory_id': 4,
+        'factory_id': 12,
         # 'cmd': 'display current-configuration'
         # 'cmd': 'display clock'
         'cmd': 'get system'
-    }
+        }
     ssh_cmd(_dict)

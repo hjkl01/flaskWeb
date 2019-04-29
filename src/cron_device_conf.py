@@ -64,7 +64,7 @@ class Cron:
                 'factory_id': device[3]
             }
 
-            if device[4] == '3':
+            if str(device[4]) == '3':
                 tmp_result = telnet_cmd(_dict)
             else:
                 tmp_result = ssh_cmd(_dict)
@@ -99,7 +99,7 @@ class Cron:
                 'factory_id': device[3],
                 'cmd': _dict.get('command')
             }
-            if device[4] == '3':
+            if str(device[4]) == '3':
                 tmp_result = telnet_cmd(cmd_dict)
             else:
                 tmp_result = ssh_cmd(cmd_dict)
@@ -107,7 +107,7 @@ class Cron:
                 result[device_id] = tmp_result.get('result').decode('utf8').replace('"', '\\"')
             except:
                 result[device_id] = tmp_result.get('result').replace('"', '\\"')
-        logger.info(result)
+        # logger.info(result)
         return result
 
 

@@ -23,8 +23,9 @@ def telnet_cmd(_dict):
 
     tn.write(b"%s\r\n" % _dict.get('cmd').encode())
 
-    time.sleep(5)
+    time.sleep(3)
     logger.info(_dict.get('cmd'))
+    time.sleep(3)
 
     result = b''
     i = 0
@@ -33,11 +34,13 @@ def telnet_cmd(_dict):
         # tn.read_until(b'more')
         temp = tn.read_very_eager()
         result += temp
-        logger.info(temp)
+        # logger.info(temp)
         if b'more' in temp or b'More' in temp:
+            # logger.info('input \\n')
             tn.write(b' \n')
             time.sleep(1)
         else:
+            print(temp)
             break
         logger.info(i)
     # tn.read_until(b'>')
@@ -49,19 +52,13 @@ def telnet_cmd(_dict):
 
 if __name__ == '__main__':
     _dict = {
-        'ip': '66.16.254.254',
+        # 'ip': '32.3.224.21',
+        'ip': "32.3.242,1",
         'port': '23',
-        'username': 'cisco',
-        'password': 'cisco',
-        'cmd': 'show version'
+        'username': 'jsnx',
+        # 'password': '04nuaa07',
+        'password': 'jmycisco',
+        # 'cmd': 'show run'
+        'cmd': 'get conf'
     }
-    # telnetip(_dict)
-    # _dict = {
-    #     'ip': '66.5.253.5',
-    #     'port': '23',
-    #     'username': 'jsnx',
-    #     'password': 'jmycisco',
-    #     'cmd': 'get conf'
-    # }
-    # test(_dict)
     telnet_cmd(_dict)
