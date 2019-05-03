@@ -18,6 +18,7 @@ def telnet_cmd(_dict):
     time.sleep(3)
     # tn.read_until(b"login")
     tn.write(username + b"\n")
+    time.sleep(1)
     tn.write(password + b"\n")
     time.sleep(1)
 
@@ -25,7 +26,7 @@ def telnet_cmd(_dict):
 
     time.sleep(3)
     logger.info(_dict.get('cmd'))
-    time.sleep(3)
+    time.sleep(5)
 
     result = b''
     i = 0
@@ -33,6 +34,7 @@ def telnet_cmd(_dict):
         i += 1
         # tn.read_until(b'more')
         temp = tn.read_very_eager()
+        logger.info(temp)
         result += temp
         # logger.info(temp)
         if b'more' in temp or b'More' in temp:
@@ -53,12 +55,13 @@ def telnet_cmd(_dict):
 if __name__ == '__main__':
     _dict = {
         # 'ip': '32.3.224.21',
-        'ip': "32.3.242,1",
+        # 'ip': "66.5.254.130",
+        'ip': '66.10.254.254',
         'port': '23',
         'username': 'jsnx',
         # 'password': '04nuaa07',
         'password': 'jmycisco',
         # 'cmd': 'show run'
-        'cmd': 'get conf'
+        'cmd': 'display cur'
     }
     telnet_cmd(_dict)
