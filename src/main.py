@@ -7,6 +7,7 @@ from common import _try
 from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
+from logstash_alarm import Alarm
 from _nmap import run as nmap
 from cron_device_conf import Cron
 from ansible_api import ansible_api
@@ -25,6 +26,13 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss}
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/elk', method=['POST'])
+def elk():
+    _alarm = Alarm(request.json)
+    _alarm.alarm()
+    return 'finish !'
 
 
 @app.route('/ping', methods=['POST'])
@@ -189,7 +197,7 @@ def search(path, word, _from=1, _to=1):
 
 @app.errorhandler(404)
 def errer_500(e):
-    return jsonify({'error':404})
+    return jsonify({'error': 404})
     return redirect('/')
 
 
