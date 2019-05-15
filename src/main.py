@@ -8,6 +8,7 @@ from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
 from logstash_alarm import Alarm
+from python_nmap import run as nmap_scan
 from _nmap import run as nmap
 from cron_device_conf import Cron
 from ansible_api import ansible_api
@@ -28,7 +29,12 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/elk', method=['POST'])
+@app.route('/nmap')
+def _namp():
+    return jsonify(nmap_scan())
+
+
+@app.route('/elk', methods=['POST'])
 def elk():
     _alarm = Alarm(request.json)
     _alarm.alarm()

@@ -8,5 +8,6 @@ mysql-connector
 paramiko
 netmiko
 python-crontab
+python-nmap
 
 mycli

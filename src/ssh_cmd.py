@@ -13,7 +13,7 @@ def ssh_cmd(_dict):
     if _dict.get('factory_id'):
         factory_ids = {
             "4": "huawei",
-            "8": "cisco_nxos",
+            "8": "cisco_ios",
             "12": "juniper",
             "16": None,
         }
@@ -54,31 +54,30 @@ def use_netmiko(_dict, cmd):
     output = net_connect.send_command_timing(
         cmd, strip_command=False, strip_prompt=False)
     i = 0
-    temp = net_connect.send_command_timing(
-        " \n", strip_command=False, strip_prompt=False)
-    while 'more' in temp:
+    temp = net_connect.send_command_timing( " \n", strip_command=False, strip_prompt=False)
+    while 'more' in temp or 'More' in temp:
         temp = net_connect.send_command_timing(
             " \n", strip_command=False, strip_prompt=False)
-        # print(temp)
+        logger.info(temp)
         output += temp
         i += 1
         logger.info(i)
 
     net_connect.disconnect()
-    # logger.info(output)
-    return {"result":output}
+    logger.info(output)
+    return {'result':output}
 
 
 if __name__ == '__main__':
     _dict = {
-        'ip': '32.3.242.1',
+        'ip': '66.5.11.219',
         'port': '22',
-        'username': 'jsnx',
-        'password': 'jmycisco',
-        # 'device_type': 'juniper',
-        'factory_id': 12,
+        'username': 'admin',
+        'password': 'admin',
+        # 'device_type': 'cisco_ios',
+        'factory_id': 8,
         # 'cmd': 'display current-configuration'
         # 'cmd': 'display clock'
-        'cmd': 'get system'
-        }
+        'cmd': 'show run'
+    }
     ssh_cmd(_dict)

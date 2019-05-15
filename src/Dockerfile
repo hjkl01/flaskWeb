@@ -18,9 +18,9 @@ WORKDIR /app
 RUN pip3 install -r /app/requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
 # RUN python3 /app/create_cron_task.py
 # CMD /usr/local/bin/uwsgi --ini /app/uwsgi.ini
-# CMD python3 main.py
+CMD python3 main.py
 # CMD gunicorn -c gunicorn.py main:app
 
-COPY config/supervisor.conf /etc/supervisor/conf.d/
-CMD ["/usr/bin/supervisord","-n"]
+# COPY config/supervisor.conf /etc/supervisor/conf.d/
+# CMD ["/usr/bin/supervisord","-n"]
 

@@ -11,16 +11,27 @@ services:
       - /tmp/ansible_tasks:/app/tasks
       - ./config/timezone:/etc/timezone
       - ./config/localtime:/etc/localtime
-
       # - ./sockets:/sockets
+      #     networks:
+      #       - pythonweb
 
-  nginx_server:
-    build: server 
-    restart: always
-    environment:
-      - "TZ=Asia/Shanghai"
-    ports:
-      - 80:80
-    volumes:
-      - ./server/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx_log:/var/log/nginx
+
+        #   nginx_server:
+        #     build: server 
+        #     restart: always
+        #     environment:
+        #       - "TZ=Asia/Shanghai"
+        #     ports:
+        #       - 80:80
+        #     volumes:
+        #       - ./server/nginx.conf:/etc/nginx/conf.d/default.conf
+        #       - ./nginx_log:/var/log/nginx
+        #       - ./config/timezone:/etc/timezone
+        #       - ./config/localtime:/etc/localtime
+        #     networks:
+        #       - pythonweb
+        # 
+        # networks:
+        # 
+        #   pythonweb:
+        #     driver: bridge
