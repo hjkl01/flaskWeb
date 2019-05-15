@@ -29,6 +29,14 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/local_cmd', methods=['POST'])
+def local_run():
+    cmd = request.json.get('cmd')
+    result = {'result': os.popen(cmd).read()}
+    logger.info(result)
+    return jsonify(result)
+
+
 @app.route('/nmap')
 def _namp():
     return jsonify(nmap_scan())
@@ -209,6 +217,6 @@ def errer_500(e):
 
 if __name__ == '__main__':
     # app.debug = True
-    # app.run(host='0.0.0.0', port=8001)
+    app.run(host='0.0.0.0', port=8001)
     # app.run(host='0.0.0.0', port=8001, threaded=True)
-    app.run(host='0.0.0.0', port=8001, processes=4)
+    # app.run(host='0.0.0.0', port=8001, processes=4)
