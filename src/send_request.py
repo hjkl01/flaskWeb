@@ -1,6 +1,6 @@
 from loguru import logger
 import multiprocessing
-import yaml
+import config
 import requests
 
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
@@ -8,7 +8,7 @@ logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss}
 
 def crawler(url, server_name):
     try:
-        rep = requests.get(url)
+        rep = requests.get(url, timeout=3)
         print(rep.status_code)
         return server_name, rep.status_code
     except Exception as err:
@@ -16,12 +16,10 @@ def crawler(url, server_name):
 
 
 def run():
-    with open('settings.yaml', 'r') as file:
-        config = yaml.load(file)
     result = {}
-    result['zabbix'] = {'host': config.get('zabbix_host'), 'port': config.get('zabbix_port')}
-    result['elk'] = {'host': config.get('elk_host'), 'port': config.get('elk_port')}
-    result['grafana'] = {'host': config.get('grafana_host'), 'port': config.get('grafana_port')}
+    result['zabbix'] = {'host': config.zabbix_host, 'port': config.zabbix_port}
+    result['elk'] = {'host': config.elk_host, 'port': config.elk_port}
+    result['grafana'] = {'host': config.grafana_host, 'port': config.grafana_port}
     logger.info(result)
     # {'zabbix': {'host': '66.3.47.31', 'port': 8081}, 'elk': {'host': '66.3.47.31', 'port': 80}, 'grafana': {'host': '66.3.47.31', 'port': 8000}}
 
@@ -40,8 +38,8 @@ def run():
 
     result = {}
     for res in temp_results:
-        # logger.info(res.get())
-        if res.get()[1] == 200:
+        # logger.debug(res.get())
+        if res.get()[0] == 200:
             result[res.get()[0]] = True
         else:
             logger.info(res.get()[1])

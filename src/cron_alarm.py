@@ -3,7 +3,7 @@
 import time
 import os
 import json
-import yaml
+import config
 import mysql.connector
 from loguru import logger
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
@@ -24,12 +24,10 @@ PRIMARY KEY (id)
 
 class Cron:
     def __init__(self):
-        with open('settings.yaml', 'r') as file:
-            self.config = yaml.load(file)
         self.mydb = mysql.connector.connect(
-            host=self.config.get('mysql_host'),
-            user=self.config.get('mysql_user'),
-            passwd=self.config.get('mysql_pass'),
+            host=config.mysql_host,
+            user=config.mysql_user,
+            passwd=config.mysql_pass,
             database='nxcloud')
         logger.info(self.mydb)
 
