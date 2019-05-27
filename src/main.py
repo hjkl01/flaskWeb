@@ -8,7 +8,7 @@ from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
 # from cron_device_conf import cron, devices_test_cmd
 from logstash_alarm import Alarm
-from python_nmap import run as nmap_scan
+from send_request import run as requests
 from _nmap import run as nmap
 from cron_device_conf import Cron
 from ansible_api import ansible_api
@@ -32,6 +32,7 @@ def index():
 @app.route('/local_cmd', methods=['POST'])
 def local_run():
     cmd = request.json.get('cmd')
+    logger.info(cmd)
     result = {'result': os.popen(cmd).read()}
     logger.info(result)
     return jsonify(result)
@@ -39,7 +40,7 @@ def local_run():
 
 @app.route('/nmap')
 def _namp():
-    return jsonify(nmap_scan())
+    return jsonify(requests())
 
 
 @app.route('/elk', methods=['POST'])

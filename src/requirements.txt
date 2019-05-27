@@ -1,8 +1,8 @@
 Flask==0.12.2
 loguru
 # uwsgi
-# gunicorn
-# gevent
+gunicorn
+gevent
 ansible
 mysql-connector
 paramiko
