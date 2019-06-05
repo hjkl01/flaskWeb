@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time
-import config
+from config import config
 import mysql.connector
 from ssh_cmd import ssh_cmd
 from telnet_cmd import telnet_cmd

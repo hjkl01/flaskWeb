@@ -6,7 +6,7 @@ import os
 from common import _try
 from ssh_ping import ssh_ping
 from ssh_cmd import ssh_cmd
-# from cron_device_conf import cron, devices_test_cmd
+from cron_device_conf import cron, devices_test_cmd
 from logstash_alarm import Alarm
 from send_request import run as requests
 from _nmap import run as nmap

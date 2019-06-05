@@ -3,7 +3,7 @@
 import time
 import os
 import json
-import config
+from config import config
 import mysql.connector
 from loguru import logger
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")

@@ -1,6 +1,6 @@
 from loguru import logger
 import multiprocessing
-import config
+from config import config
 import requests
 
 logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")

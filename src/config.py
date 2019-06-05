@@ -1,15 +1,15 @@
-mysql_host = '32.3.160.239'
-mysql_user = 'root'
-mysql_pass = 'root'
+import ruamel.yaml as yaml
 
-# zabbix_host= 32.3.160.239
-zabbix_host = '66.3.47.31'
-zabbix_port = '8081'
 
-# elk_host= 32.3.160.239
-elk_host = '66.3.47.31'
-elk_port = '80'
+class ConfigMeta(object):
+    def __getattr__(self, key):
+        try:
+            with open('settings.yaml', 'r') as file:
+                self.con = yaml.safe_load(file)
+        except BaseException:
+            warning_info = 'using default param , please read readme.md and touch settings.yaml '
+            print(warning_info)
+        return self.con.get(key)
 
-# grafana_host= 32.3.160.239
-grafana_host = '66.3.47.31'
-grafana_port = '8000'
+
+config = ConfigMeta()
