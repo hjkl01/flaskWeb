@@ -37,7 +37,8 @@ def telnet_cmd(_dict):
         logger.info(temp)
         result += temp
         # logger.info(temp)
-        if b'more' in temp or b'More' in temp:
+        # if b'more' in temp or b'More' in temp:
+        if b'more' in temp.lower(): 
             # logger.info('input \\n')
             tn.write(b' \n')
             time.sleep(1)
