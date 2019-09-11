@@ -10,5 +10,7 @@ netmiko
 python-crontab
 requests
 ruamel.yaml
+werkzeug
 
 mycli
+pymysql
