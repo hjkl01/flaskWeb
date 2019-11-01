@@ -1,15 +1,26 @@
-mysql_host: mydb.com
+mysql_host: 127.0.0.1
 mysql_user: 'root'
 mysql_pass: 'root'
 
-zabbix_host: zabbix.com
-zabbix_port: '8081'
+zabbix_host: '127.0.0.1'
+zabbix_port: 8081
 
-# elk_host= 32.3.160.239
-elk_host: elk.com
-elk_port: '80'
+elk_host: 127.0.0.1
+elk_port: 9200
 
-# grafana_host= 32.3.160.239
-grafana_host: grafana.com
-grafana_port: '8000'
+grafana_host: 88.16.153.36
+grafana_port: 8000
 
+msg_url: http://66.6.51.64:10016/http/rest/noma
+
+check_health_mysql_01: 
+    host: 32.12.129.18
+    user: root
+    passwd: root
+    db: root
+
+check_health_mysql_02: 
+    host: 32.12.65.19
+    user: root
+    passwd: root
+    db: root

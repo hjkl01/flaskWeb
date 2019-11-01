@@ -32,7 +32,7 @@ def req(cnf):
 
 
 def send_msg(_id=0, status=2, msg=None):
-    url = 'http://66.6.51.64:10016/http/rest/noma'
+    url = config.msg_url
     if status == 1:
         _id = str(time.time()).replace('.', '')
     logger.info(f"send msg .... {_id} {status}")
