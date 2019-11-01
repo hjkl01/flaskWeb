@@ -1,4 +1,6 @@
-Flask
+# Flask
+fastapi
+uvicorn
 loguru
 # uwsgi
 gunicorn
@@ -9,6 +11,7 @@ paramiko
 netmiko
 python-crontab
 requests
+pysocks
 ruamel.yaml
 werkzeug
 

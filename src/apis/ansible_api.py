@@ -11,12 +11,11 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 
 # import ansible.constants as C
-from loguru import logger
-
-logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
+from config import logger
 
 
 class ResultCallback(CallbackBase):
+
     def __init__(self, *args, **kwargs):
         super(ResultCallback, self).__init__(*args, **kwargs)
         self.task_ok = {}
@@ -37,41 +36,39 @@ def ansible_api(hosts_path='tasks/task', yml_path='tasks/task.yml'):
 
     #option 执行选项
     Options = namedtuple('Options', [
-        'connection', 'remote_user', 'ask_sudo_pass', 'verbosity', 'ack_pass', 'module_path', 'forks', 'become',
-        'become_method', 'become_user', 'check', 'listhosts', 'syntax', 'listtags', 'listtasks', 'sudo_user', 'sudo',
-        'diff'
+        'connection', 'remote_user', 'ask_sudo_pass', 'verbosity', 'ack_pass',
+        'module_path', 'forks', 'become', 'become_method', 'become_user', 'check',
+        'listhosts', 'syntax', 'listtags', 'listtasks', 'sudo_user', 'sudo', 'diff'
     ])
 
-    options = Options(
-        connection='smart',
-        remote_user=None,
-        ack_pass=None,
-        sudo_user=None,
-        forks=5,
-        sudo=None,
-        ask_sudo_pass=False,
-        verbosity=5,
-        module_path=None,
-        become=None,
-        become_method=None,
-        become_user=None,
-        check=False,
-        diff=False,
-        listhosts=None,
-        listtasks=None,
-        listtags=None,
-        syntax=None)
+    options = Options(connection='smart',
+                      remote_user=None,
+                      ack_pass=None,
+                      sudo_user=None,
+                      forks=5,
+                      sudo=None,
+                      ask_sudo_pass=False,
+                      verbosity=5,
+                      module_path=None,
+                      become=None,
+                      become_method=None,
+                      become_user=None,
+                      check=False,
+                      diff=False,
+                      listhosts=None,
+                      listtasks=None,
+                      listtags=None,
+                      syntax=None)
 
     passwords = dict()
 
     #playbook的路径要正确
-    playbook = PlaybookExecutor(
-        playbooks=[yml_path],
-        inventory=inventory,
-        variable_manager=variable_manager,
-        loader=loader,
-        options=options,
-        passwords=passwords)
+    playbook = PlaybookExecutor(playbooks=[yml_path],
+                                inventory=inventory,
+                                variable_manager=variable_manager,
+                                loader=loader,
+                                options=options,
+                                passwords=passwords)
 
     #playbook.run()
 

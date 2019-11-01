@@ -5,8 +5,7 @@ import re
 import time
 from multiprocessing import Process
 
-from loguru import logger
-logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
+from config import logger
 
 
 def _nmap(ip, port):
@@ -69,7 +68,7 @@ def get_result(c):
 
 
 def run():
-    with open('ip_port.txt', 'r') as file:
+    with open('start/ip_port.txt', 'r') as file:
         con = file.readlines()
     for c in con:
         p = Process(target=get_result, args=(c,))

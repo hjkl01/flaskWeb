@@ -5,12 +5,21 @@ import paramiko
 import multiprocessing
 import os
 import re
-from loguru import logger
+from config import logger
+from pydantic import BaseModel
 
-logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
+
+class Dict(BaseModel):
+    server_ip: str = None
+    server_port: str = None
+    server_name: str = None
+    server_passwd: str = None
+    target_ip1: str
+    target_ip2: str
 
 
 class MyThread(threading.Thread):
+
     def __init__(self, func, args=()):
         super(MyThread, self).__init__()
         self.func = func
@@ -27,10 +36,15 @@ class MyThread(threading.Thread):
 
 
 class Ssh_ping:
+
     def __init__(self, _dict):
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.ssh.connect(_dict.get('server_ip'), _dict.get('server_port'), _dict.get('server_name'), _dict.get('server_passwd'), timeout=5)
+        self.ssh.connect(_dict.server_ip,
+                         _dict.server_port,
+                         _dict.server_name,
+                         _dict.server_passwd,
+                         timeout=5)
         logger.info('connect success %s' % self.ssh)
 
     def ssh2(self, target_ip):
@@ -58,14 +72,14 @@ class Ssh_ping:
 
 
 def parse_dict(_dict):
-    result = re.findall('(\d+)\.(\d+).(\d+).(\d+)', _dict.get('target_ip1'))[0]
+    result = re.findall('(\d+)\.(\d+).(\d+).(\d+)', _dict.target_ip1)[0]
     # logger.info(result)
 
     start_ip = '%s.%s.%s.' % (result[0], result[1], result[2])
     logger.info(start_ip)
 
-    ip_from = int(re.findall('.*\.(\d+)', _dict.get('target_ip1'))[-1])
-    ip_to = int(re.findall('.*\.(\d+)', _dict.get('target_ip2'))[-1]) + 1
+    ip_from = int(re.findall('.*\.(\d+)', _dict.target_ip1)[-1])
+    ip_to = int(re.findall('.*\.(\d+)', _dict.target_ip2)[-1]) + 1
     return start_ip, ip_from, ip_to
 
 
@@ -80,10 +94,10 @@ def _ping(ip):
     return ip, result
 
 
-def ssh_ping(_dict):
+def ssh_ping(_dict: Dict):
     # def _ping(cmds): return os.popen(cmds[-1]).readlines()
     start_ip, ip_from, ip_to = parse_dict(_dict)
-    if 'server_ip' not in _dict.keys():
+    if not _dict.server_ip:
         result = {}
 
         pool = multiprocessing.Pool(processes=128)
